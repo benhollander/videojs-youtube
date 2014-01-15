@@ -409,9 +409,7 @@ videojs.Youtube.prototype.updateQualities = function(){
     for (var i = 0; i < qualities.length; ++i) {
       var el = document.createElement('li');
       el.setAttribute('class', 'vjs-menu-item');
-
-      setInnerText(el, videojs.Youtube.parseQualityName(qualities[i]));
-
+      el.innerText = videojs.Youtube.parseQualityName(qualities[i]);
       el.setAttribute('data-val', qualities[i]);
       if (qualities[i] == this.quality) el.classList.add('vjs-selected');
       
@@ -421,7 +419,7 @@ videojs.Youtube.prototype.updateQualities = function(){
         var quality = this.getAttribute('data-val');
         self.ytplayer.setPlaybackQuality(quality);
         
-        setInnerText(self.qualityTitle, videojs.Youtube.parseQualityName(quality));
+        self.qualityTitle.innerText = videojs.Youtube.parseQualityName(quality);
         
         var selected = self.qualityMenuContent.querySelector('.vjs-selected');
         if (selected) selected.classList.remove('vjs-selected');
@@ -534,7 +532,7 @@ videojs.Youtube.parseQualityName = function(name) {
 
 videojs.Youtube.prototype.onPlaybackQualityChange = function(quality){
   this.quality = quality;
-  setInnerText(this.qualityTitle, videojs.Youtube.parseQualityName(quality));
+  this.qualityTitle.innerText = videojs.Youtube.parseQualityName(quality);
   
   switch(quality){
     case 'medium':
@@ -586,19 +584,16 @@ videojs.Youtube.prototype.onError = function(error){
   this.player_.trigger('error');
 };
 
-//Cross browser solution to add text content to an element
-function setInnerText(element, text) {
-  var textProperty = ('innerText' in element)? 'innerText' : 'textContent';
-  element[textProperty] = text;
-}
-
 // Stretch the YouTube poster
 // Keep the iframeblocker in front of the player when the user is inactive
 // (ONLY way because the iframe is so selfish with events)
 (function() {
-  var style = document.createElement("style");
-  style.type = 'text/css';
-  var css = " .vjs-youtube .vjs-poster { background-size: cover; }.iframeblocker { display:none;position:absolute;top:0;left:0;width:100%;height:100%;cursor:pointer;z-index:2; }.vjs-youtube.vjs-user-inactive .iframeblocker { display:block; } .vjs-quality-button > div:first-child > span:first-child { position:relative;top:7px }";
-  setInnerText(style, css);
-  document.getElementsByTagName("head")[0].appendChild(style);
+  var style = document.createElement('style');
+  style.text = ' \
+  .vjs-youtube .vjs-poster { background-size: cover; }\
+  .iframeblocker { display:none;position:absolute;top:0;left:0;width:100%;height:100%;cursor:pointer;z-index:2; }\
+  .vjs-youtube.vjs-user-inactive .iframeblocker { display:block; } \
+  .vjs-quality-button > div:first-child > span:first-child { position:relative;top:7px }\
+  ';
+  document.getElementsByTagName('head')[0].appendChild(style);
 })();
